@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "youtube_feed_download"
+authors = [
+    {name = "MB"},
+]
+description = "Download YouTube videos from multiple channels using their RSS feeds"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["youtube", "download", "subscription", "feed"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dynamic = [
+    "version",
+    "dependencies"
+]
+
+[project.scripts]
+yt-feed-dl = "youtube_feed_download.__main__:main"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+version = {attr = "youtube_feed_download.__version__"}
