@@ -20,6 +20,9 @@ class YouTubeFeed:
     channel_id_regex = re.compile(r"UC[\w-]{22}")
     external_id_regex = re.compile(r'"externalId":"([^"]+)"')
 
+    def __init__(self, verbose: bool=False):
+        self.verbose = verbose
+
 
     def normalize_channel_name(self, channel_name: str) -> str:
         if 'youtube' in channel_name:
@@ -41,7 +44,10 @@ class YouTubeFeed:
             if not response.ok:
                 continue
             if (match := self.external_id_regex.search(response.text)):
-                return match.groups()[0]
+                channel_id = match.groups()[0]
+                if self.verbose:
+                    print(f"{channel_name} -> {channel_id}")
+                return channel_id
         print(f"No ID found for {channel_name}")
         return
 
@@ -87,9 +93,17 @@ class YouTubeFeed:
     def download_videos(self,
                         videos_by_channel: dict[str,dict],
                         output_dir: str='videos',
+                        group_by_channel: bool=False,
                         filters: list[callable]=[]):
+
         if output_dir and not output_dir.endswith('/'):
             output_dir += '/'
+
+        filename_template = "%(title)s.%(ext)s"
+        if group_by_channel:
+            output_template = f"{output_dir}%(channel)s/{filename_template}"
+        else:
+            output_template = f'{output_dir}{filename_template}'
 
         ydl_opts = {'extract_flat': 'discard_in_playlist',
                     'final_ext': 'm4a',
@@ -98,7 +112,7 @@ class YouTubeFeed:
                     'ignoreerrors': 'only_download',
                     'mark_watched': True,
                     'nocheckcertificate': True,
-                    'outtmpl': {'default': f'{output_dir}%(title)s.%(ext)s', 'pl_thumbnail': ''},
+                    'outtmpl': {'default': output_template, 'pl_thumbnail': ''},
                     'overwrites': False,
                     'postprocessors': [{'key': 'FFmpegExtractAudio',
                                         'nopostoverwrites': False,

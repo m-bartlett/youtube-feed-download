@@ -43,6 +43,11 @@ def main():
                         metavar="/path/to/receipt.json",
                         help="Output data of the videos that were downloaded to the given path.")
 
+    parser.add_argument('--group-by-channel',
+                        action="store_true",
+                        help="""Downloaded files will be placed in subdirectories named after their
+                                respective channel""")
+
     parser.add_argument('--verbose', action="store_true")
 
     args = parser.parse_args()
@@ -69,7 +74,7 @@ def main():
         else:
             channels.append(channel)
 
-    ytf = YouTubeFeed()
+    ytf = YouTubeFeed(verbose=args.verbose)
     channel_ids = ytf.get_channel_ids_from_names(channels)
 
     videos_by_channel = ytf.get_channel_videos_uploaded_since_time(channel_ids,
@@ -83,6 +88,7 @@ def main():
 
     download_receipt = ytf.download_videos(videos_by_channel,
                                            output_dir=args.output,
+                                           group_by_channel=args.group_by_channel,
                                            filters=download_filters)
 
     download_receipt_body = json.dumps(download_receipt, indent=4, default=str)
