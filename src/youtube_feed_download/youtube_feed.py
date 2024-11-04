@@ -55,7 +55,7 @@ class YouTubeFeed:
     def get_channel_ids_from_names(self, channel_names: list[str]) -> tuple[str]:
         with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
             futures = pool.map(self.get_channel_id, channel_names)
-            channel_ids = tuple(c for c in futures)
+            channel_ids = tuple(c for c in futures if c)
         return channel_ids
 
 
