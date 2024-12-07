@@ -30,6 +30,10 @@ def main():
                         metavar='<hh:mm:ss or total seconds>',
                         help="Only process videos at least this long")
 
+    parser.add_argument('--max-duration', type=str,
+                        metavar='<hh:mm:ss or total seconds>',
+                        help="Do not process videos longer than this")
+
     parser.add_argument('--channels',
                         metavar="<file path or list of channels>",
                         required=True,
@@ -64,7 +68,18 @@ def main():
                 duration_seconds = float(args.min_duration)
             except ValueError:
                 raise ValueError("Invalid value provided for minimum duration")
-        download_filters.append(lambda v: v['duration'] > duration_seconds)
+        download_filters.append(lambda v: v['duration'] >= duration_seconds)
+
+    if args.max_duration:
+        try:
+            hours, minutes, seconds = args.max_duration.split(':')
+            duration_seconds = hours*3600 + minutes*60 + seconds
+        except ValueError:
+            try:
+                duration_seconds = float(args.max_duration)
+            except ValueError:
+                raise ValueError("Invalid value provided for maximum duration")
+        download_filters.append(lambda v: v['duration'] <= duration_seconds)
 
 
     channels = []
