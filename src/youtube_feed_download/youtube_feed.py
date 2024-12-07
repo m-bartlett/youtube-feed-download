@@ -106,7 +106,6 @@ class YouTubeFeed:
             output_template = f'{output_dir}{filename_template}'
 
         ydl_opts = {'extract_flat': 'discard_in_playlist',
-                    'final_ext': 'm4a',
                     'format': 'bestaudio/best',
                     'fragment_retries': 10,
                     'ignoreerrors': 'only_download',
@@ -116,7 +115,6 @@ class YouTubeFeed:
                     'overwrites': False,
                     'postprocessors': [{'key': 'FFmpegExtractAudio',
                                         'nopostoverwrites': False,
-                                        'preferredcodec': 'm4a',
                                         'preferredquality': '0'},
                                        {'add_chapters': True,
                                         'add_infojson': 'if_exists',
