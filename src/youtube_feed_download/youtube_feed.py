@@ -114,6 +114,7 @@ class YouTubeFeed:
                     'outtmpl': {'default': output_template, 'pl_thumbnail': ''},
                     'overwrites': False,
                     'postprocessors': [{'key': 'FFmpegExtractAudio',
+                                        'preferredcodec': 'best',
                                         'nopostoverwrites': False,
                                         'preferredquality': '0'},
                                        {'add_chapters': True,
@@ -134,12 +135,7 @@ class YouTubeFeed:
             for channel_id, videos in videos_by_channel.items():
                 for video_id, video_props in videos.items():
                     video_info = ydl.extract_info(video_props['url'], download=False, process=False)
-                    skip_video = False
-                    try:
-                        if not all(_filter(video_info) for _filter in filters):
-                            skip_video = True
-                    except TypeError:
-                        skip_video = True
+                    skip_video = not all(_filter(video_info) for _filter in filters)
                     if skip_video:
                         print(f"Skipping {video_props['url']}")
                         continue
