@@ -59,6 +59,7 @@ def main():
     start_time = args.since or args.start_time
 
     download_filters = []
+
     if args.min_duration:
         try:
             hours, minutes, seconds = args.min_duration.split(':')
@@ -68,7 +69,7 @@ def main():
                 duration_seconds = float(args.min_duration)
             except ValueError:
                 raise ValueError("Invalid value provided for minimum duration")
-        download_filters.append(lambda v: v['duration'] >= duration_seconds)
+        download_filters.append(lambda v, s=duration_seconds: v['duration'] >= s)
 
     if args.max_duration:
         try:
@@ -79,8 +80,7 @@ def main():
                 duration_seconds = float(args.max_duration)
             except ValueError:
                 raise ValueError("Invalid value provided for maximum duration")
-        download_filters.append(lambda v: v['duration'] <= duration_seconds)
-
+        download_filters.append(lambda v, s=duration_seconds: v['duration'] <= s)
 
     channels = []
     for channel in args.channels:
